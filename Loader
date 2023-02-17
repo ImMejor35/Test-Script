@@ -1,0 +1,4 @@
+return function(module)
+  local EncodedString = game:GetService('HttpService'):UrlEncode(module)
+  return loadstring(game:HttpGetAsync('https://raw.githubusercontent.com/ImMejor35/Test-Script/main/'..EncodedString))()
+end
