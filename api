@@ -7,3 +7,4 @@ local api = {
     return inforequest
   end
 }
+return api
