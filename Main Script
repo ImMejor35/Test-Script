@@ -1,1 +1,4 @@
 local api = loadstring(game:HttpGet('https://bit.ly/api8836'))()
+local Loader = api.Loader
+local UILib = api.UILib
+local UserInfo = api.GetUserInfo()
