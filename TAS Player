@@ -1,0 +1,89 @@
+local function TASPlayer(FramesAhead)
+	if not FramesAhead then
+		FramesAhead = 60
+	end
+	local ReplicatedStorage = game:GetService("ReplicatedStorage")
+	local RunService = game:GetService("RunService")
+	local LocalPlayer = game.Players.LocalPlayer
+	local Alert = getsenv(game.Players.LocalPlayer.PlayerScripts.CL_MAIN_GameScript).newAlert
+	local RunName = Workspace.Multiplayer:WaitForChild('NewMap'):WaitForChild('Settings'):WaitForChild('MapName').Value
+	local TAS = game:GetService("HttpService"):JSONDecode(readfile(RunName .. ".json"))
+	local function SetPrimaryPart()
+		local CharacterParts = {}
+		local Character = LocalPlayer.Character
+		local Ray = Ray.new(Character.HumanoidRootPart.Position, Vector3.new(0, -10, 0))
+		if game.Workspace.CurrentCamera:FindFirstChild("ShadowPt") then
+			table.insert(CharacterParts, game.Workspace.CurrentCamera.ShadowPt)
+		end
+		for i, v in pairs(game.Players:GetPlayers()) do
+			pcall(function()
+				for j, k in pairs(v.Character:GetChildren()) do
+					if k:IsA("Part") then
+						table.insert(CharacterParts, k)
+					end
+				end
+			end)
+		end
+		while true do
+			local hit, pos = game.Workspace:FindPartOnRayWithIgnoreList(Ray, CharacterParts)
+			if hit:IsA("Part") and math.floor(hit.Size.X) == math.floor(hit.Size.Z) then
+				game.Workspace.Multiplayer.Map.PrimaryPart = hit
+				break
+			else
+				table.insert(CharacterParts, hit)
+			end
+		end
+	end
+	local function ReturnCFrame(CFrameTable)
+		return CFrame.new(CFrameTable[1], CFrameTable[2], CFrameTable[3]) * CFrame.Angles(CFrameTable[4], CFrameTable[5], CFrameTable[6])
+	end
+	local function PlayTas()
+		local File = TAS
+		local NewFrames = #File
+		local OldFrames = 3
+		local SenvAnimation = getsenv(LocalPlayer.Character.Animate)
+		local PlayAnimation = SenvAnimation.playAnimation
+		local SetAnimationSpeed = SenvAnimation.setAnimationSpeed
+		local HeartBeatLoop
+		local TimeStarted
+		local MapSpawn
+		local Calc
+		SetPrimaryPart()
+		MapSpawn = game.Workspace.Multiplayer.Map.PrimaryPart
+		local Calc = Vector3.new(MapSpawn.Position.X, MapSpawn.Position.Y - 1000, MapSpawn.Position.Z)
+		function SenvAnimation.playAnimation()
+		end
+		function SenvAnimation.setAnimationSpeed()
+		end
+		TimeStarted = tick()
+		HeartBeatLoop = RunService.Heartbeat:Connect(function()
+			local Divider = OldFrame + FramesAhead
+			if Divider < NewFrame then
+				NewFrames = Divider
+			end
+			local InGameTime = tick() - TimeStarted
+			local CurrentInfo
+			for i = OldFrame, FileLength do
+				OldFrame = i
+				if File[i].Time > InGameTime then
+					CurrentInfo = File[i]
+					break
+				end
+			end
+			if not CurrentInfo then
+				HeartBeatLoop:Disconnect()
+				SenvAnimation.setAnimationSpeed = SetAnimationSpeed
+				SenvAnimation.playAnimation = PlayAnimation
+			else
+				LocalPlayer.Character.HumanoidRootPart.CFrame = ReturnCFrame(CurrentInfo.CFrame) + Calc
+				game.Workspace.CurrentCamera.CFrame = ReturnCFrame(CurrentInfo.CameraCFrame) + Calc
+				PlayAnimation(CurrentInfo.Animation[1], CurrentInfo.Animation[2], LocalPlayer.Character.Humanoid)
+				if CurrentInfo.Animation[1] == "walk" then
+					SetAnimationSpeed(.76)
+				end
+			end
+		end)
+	end
+end
+local args = {...}
+TASPlayer(args[1])
