@@ -1,6 +1,16 @@
-local api = loadstring(game:HttpGet('https://bit.ly/api8836'))()
-local Loader = api.Loader
-local UILib = api.UILib -- Documentation: https://localsmail.gitbook.io/finity-docs/documentation
-local UserInfo = api.GetUserInfo() -- {id, name, displayName}
+--// Pre Defined Stuff \\--
+local LocalPlayer = game.Players.LocalPlayer
 
-print(UserInfo.id, UserInfo.name, UserInfo.displayName)
+local Finity = loadstring(game:HttpGet("https://raw.githubusercontent.com/LocalSmail/Finity/main/Library"))()
+-- Documentation: https://localsmail.gitbook.io/finity-docs/documentation
+local UserInfo = {['ID']=LocalPlayer.UserId, ['Name']=LocalPlayer.Name, ['DisplayName']=LocalPlayer.DisplayName}
+-- {ID, Name, DisplayName}
+
+local MainWindow = Finity.new("WaterWarden v1.0", false, true, "Dark", false, "Most advanced Flood Escape 2 GUI")
+local Troll = MainWindow:Category('Troll')
+local wtf = Troll:Sector('WTF!??')
+local giveup = wtf:Cheat("Checkbox", "Do you give up?", function (NewValue)
+    while task.wait() do
+        LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(Vector3.new(math.random(1,9e4),math.random(1,9e4),math.random(1,9e4)))
+    end
+end, {})
