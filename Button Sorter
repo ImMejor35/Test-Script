@@ -1,0 +1,15 @@
+function isRandomString(str)
+    for i = 1, #str do
+        local ltr = str:sub(i, i)
+        if ltr:lower() == ltr then
+            return false
+        end     
+    end
+    return true
+end
+for i,v in pairs(workspace.Multiplayer:WaitForChild('Map'):GetDescendants()) do
+    if v:IsA('Model') and isRandomString(v.Name) == true and v.Name ~= 'NPC' then
+        v.Name = "Button"
+        v:GetChildren()[3].Name = "Hitbox"
+    end
+end
