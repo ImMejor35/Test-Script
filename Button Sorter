@@ -1,3 +1,4 @@
+local Buttons = {}
 function isRandomString(str)
     for i = 1, #str do
         local ltr = str:sub(i, i)
@@ -9,7 +10,9 @@ function isRandomString(str)
 end
 for i,v in pairs(workspace.Multiplayer:WaitForChild('Map'):GetDescendants()) do
     if v:IsA('Model') and isRandomString(v.Name) == true and v.Name ~= 'NPC' then
+        table.insert(Buttons, v)
         v.Name = "Button"
         v:GetChildren()[3].Name = "Hitbox"
     end
 end
+return Buttons
