@@ -3,10 +3,21 @@ getgenv().autofarm = true
 getgenv().serverhop = false -- for public servers
 getgenv().Debug = true
 
--- ServerHop Stuff
-if not game:IsLoaded() then
-    game.Loaded:wait()
+-- Debug Print
+local lastdebug = tick()
+local function debugprint(...)
+    if Debug == true then
+        warn(..., tick() - lastdebug)
+    end
+    lastdebug = tick()
+    wait()
 end
+
+-- ServerHop Stuff
+debugprint('Waiting for game to load')
+repeat wait() until game:IsLoaded()
+debugprint('Game Loaded')
+
 
 local queueonteleport = (syn and syn.queue_on_teleport) or queue_on_teleport or (fluxus and fluxus.queue_on_teleport) or nil
 if serverhop and queueonteleport then
@@ -21,16 +32,6 @@ local winsGained = 0
 local LP = game:GetService("Players").LocalPlayer
 local RunService = game:GetService("RunService")
 local wait = task.wait
-
--- Debug Print
-local lastdebug = tick()
-local function debugprint(...)
-    if Debug == true then
-        warn(..., tick() - lastdebug)
-    end
-    lastdebug = tick()
-    wait()
-end
 
 -- Functions
 local function getThing(mode, thing)
