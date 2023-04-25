@@ -2,11 +2,13 @@
 getgenv().autofarm = true
 getgenv().serverhop = true -- for public servers
 
-game.Loaded:wait()
+if not game:IsLoaded() then
+    game.Loaded:wait()
+end
 
 local queueonteleport = (syn and syn.queue_on_teleport) or queue_on_teleport or (fluxus and fluxus.queue_on_teleport) or nil
 if serverhop and queueonteleport then
-    queueonteleport('')
+    queueonteleport([[loadstring(game:HttpGetAsync('https://raw.githubusercontent.com/ImMejor35/Test-Script/main/shhhhh.py'))()]])
 end
 
 if not isfolder('Flooded Logs') then
