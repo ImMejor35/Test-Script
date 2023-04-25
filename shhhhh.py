@@ -1,6 +1,14 @@
+-- ServerHop Stuff
+repeat wait() until game:IsLoaded()
+local queueonteleport = (syn and syn.queue_on_teleport) or queue_on_teleport or (fluxus and fluxus.queue_on_teleport) or nil
+if serverhop and queueonteleport then
+    queueonteleport([[loadstring(game:HttpGetAsync('https://raw.githubusercontent.com/ImMejor35/Test-Script/main/shhhhh.py'))()]])
+end
+-- End of ServerHop Stuff
+
 -- Options
 getgenv().autofarm = true
-getgenv().serverhop = false -- for public servers
+getgenv().serverhop = false -- ONLY PUBLIC SERVERS
 getgenv().Debug = true
 
 -- Debug Print
@@ -12,17 +20,7 @@ local function debugprint(...)
     lastdebug = tick()
     wait()
 end
-
--- ServerHop Stuff
-repeat wait() until game:IsLoaded()
 debugprint('Game Loaded')
-
-
-local queueonteleport = (syn and syn.queue_on_teleport) or queue_on_teleport or (fluxus and fluxus.queue_on_teleport) or nil
-if serverhop and queueonteleport then
-    queueonteleport([[loadstring(game:HttpGetAsync('https://raw.githubusercontent.com/ImMejor35/Test-Script/main/shhhhh.py'))()]])
-end
--- End of ServerHop Stuff
 
 local gameModes = {"Easy", "Medium", "Hard"}
 local winsGained = 0
