@@ -5,7 +5,7 @@ getgenv().serverhop = true -- for public servers
 if not game:IsLoaded() then
     game.Loaded:wait()
 end
-
+rconsoleclear()
 local queueonteleport = (syn and syn.queue_on_teleport) or queue_on_teleport or (fluxus and fluxus.queue_on_teleport) or nil
 if serverhop and queueonteleport then
     queueonteleport([[loadstring(game:HttpGetAsync('https://raw.githubusercontent.com/ImMejor35/Test-Script/main/shhhhh.py'))()]])
@@ -13,12 +13,13 @@ end
 
 if not isfolder('Flooded Logs') then
     makefolder('Flooded Logs')
-    writefile('Stats','')
 end
-
+if not isfile('Flooded Logs/Stats.txt') then
+    writefile('Stats.txt','0, ')
+end
 local function log(wins, Time)
     if serverhop then
-        appendfile('Stats',tostring(wins).."|"..tostring(Time).."\n")
+        appendfile('Flooded Logs/Stats.txt',tostring(wins).."|"..tostring(Time).."\n")
     end
 end
 
@@ -57,11 +58,11 @@ end
 local function playGame(mode)
     -- Enters Lift
     touchPart(getThing(mode, 'entry'))
-    -- Wait till game start efficiently?
-    for i = 1,3 do
-        getThing(mode, 'info').Changed:wait()
-    end
-    -- Spam touch exit till it wins
+    -- Wait until game start
+    repeat
+        wait()
+    until LP.Ingame.Value == 1
+    -- Spam touch exit until win
     repeat
         wait()
         touchPart(getThing(mode, 'exit'))
@@ -75,7 +76,8 @@ end
 RunService.Heartbeat:Connect(function()
     if autofarm and LP.Ingame.Value == 0 and LP.Waiting.Value == 0 then
         for _, mode in ipairs(gameModes) do
-            if getThing(mode, 'info').Value == "Game is Ready!" then
+            local infoval = getThing(mode, 'info').Value
+            if infoval == "Game is Ready!" or infoval:lower():match('intermission') then
                 playGame(mode)
                 if not serverhop then
                     rconsoleprint("Gained", winsGained, "wins so far!")
