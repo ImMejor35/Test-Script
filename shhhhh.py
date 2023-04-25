@@ -1,38 +1,38 @@
 -- Options
 getgenv().autofarm = true
-getgenv().serverhop = true -- for public servers
+getgenv().serverhop = false -- for public servers
+getgenv().Debug = true
 
+-- ServerHop Stuff
 if not game:IsLoaded() then
     game.Loaded:wait()
 end
-rconsoleclear()
+
 local queueonteleport = (syn and syn.queue_on_teleport) or queue_on_teleport or (fluxus and fluxus.queue_on_teleport) or nil
 if serverhop and queueonteleport then
     queueonteleport([[loadstring(game:HttpGetAsync('https://raw.githubusercontent.com/ImMejor35/Test-Script/main/shhhhh.py'))()]])
 end
-
-if not isfolder('Flooded Logs') then
-    makefolder('Flooded Logs')
-end
-if not isfile('Flooded Logs/Stats.txt') then
-    writefile('Stats.txt','0, ')
-end
-local function log(wins, Time)
-    if serverhop then
-        appendfile('Flooded Logs/Stats.txt',tostring(wins).."|"..tostring(Time).."\n")
-    end
-end
+-- End of ServerHop Stuff
 
 local gameModes = {"Easy", "Medium", "Hard"}
 local winsGained = 0
-local StartClock = os.clock()
-log(winsGained, os.clock() - StartClock)
 
 -- Constants
 local LP = game:GetService("Players").LocalPlayer
 local RunService = game:GetService("RunService")
 local wait = task.wait
 
+-- Debug Print
+local lastdebug = tick()
+local function debugprint(...)
+    if Debug == true then
+        warn(..., tick() - lastdebug)
+    end
+    lastdebug = tick()
+    wait()
+end
+
+-- Functions
 local function getThing(mode, thing)
     local mode = workspace[mode]
     local thing = thing:lower()
@@ -57,36 +57,46 @@ end
 
 local function playGame(mode)
     -- Enters Lift
+    debugprint('Entering Lift..')
     touchPart(getThing(mode, 'entry'))
-    -- Wait until game start
+    debugprint('Entered Lift')
+    -- Wait until game is ready
+    debugprint('Waiting for "Game is Ready!"')
     repeat
         wait()
-    until LP.Ingame.Value == 1
+    until getThing(mode, 'info').Value == "Game is Ready!"
+    debugprint('"Game is Ready!" detected.')
+    debugprint('Info Changed Checks Started..')
+    for i = 1,3 do
+        debugprint('Info Changed #', i)
+        getThing(mode, 'info').Changed:wait()
+    end
+    debugprint('Touching Exit..')
     -- Spam touch exit until win
     repeat
         wait()
         touchPart(getThing(mode, 'exit'))
     until LP.Ingame.Value == 0
     winsGained += 1
-    log(winsGained, os.clock() - StartClock)
+    debugprint('Game Won.')
 end
+
 local function serverhop()
-    loadstring(game:HttpGetAsync('https://raw.githubusercontent.com/Morples/Server-hop/main/Script'))()
+    if serverhop then
+        loadstring(game:HttpGetAsync('https://raw.githubusercontent.com/Morples/Server-hop/main/Script'))()
+    end
 end
-RunService.Heartbeat:Connect(function()
+
+while wait() do
     if autofarm and LP.Ingame.Value == 0 and LP.Waiting.Value == 0 then
         for _, mode in ipairs(gameModes) do
             local infoval = getThing(mode, 'info').Value
             if infoval == "Game is Ready!" or infoval:lower():match('intermission') then
                 playGame(mode)
-                if not serverhop then
-                    rconsoleprint("Gained", winsGained, "wins so far!")
-                end
-                break
+                print("Gained", winsGained, "wins so far!")
+                continue
             end
         end
-        if serverhop then
-            serverhop()
-        end
+        serverhop()
     end
-end)
+end
