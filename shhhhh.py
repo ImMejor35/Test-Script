@@ -14,7 +14,6 @@ local function debugprint(...)
 end
 
 -- ServerHop Stuff
-debugprint('Waiting for game to load')
 repeat wait() until game:IsLoaded()
 debugprint('Game Loaded')
 
