@@ -1,3 +1,4 @@
+function GetButtons()
 local Buttons = {}
 function isRandomString(str)
     for i = 1, #str do
@@ -16,3 +17,4 @@ for i,v in pairs(workspace.Multiplayer:WaitForChild('Map'):GetDescendants()) do
     end
 end
 return Buttons
+end
