@@ -18,3 +18,4 @@ for i,v in pairs(workspace.Multiplayer:WaitForChild('Map'):GetDescendants()) do
 end
 return Buttons
 end
+getgenv().GetButtons = GetButtons
