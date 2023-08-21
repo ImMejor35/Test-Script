@@ -1,0 +1,45 @@
+getgenv().Spoofing = {}
+getgenv().Blocking = {}
+local newindex
+newindex = hookmetamethod(game:GetService("Workspace"), "__newindex", function(self, key, newValue, ...)
+	local SpoofingTable = getgenv().Spoofing
+	if checkcaller() and not SpoofingTable[self] and key ~= "Disabled" and key ~= "Parent" and key ~= "CFrame" and key ~= "Position" then
+		local oldvalue = self[key]
+		SpoofingTable[self] = {}
+		SpoofingTable[self][key] = oldvalue
+	elseif not checkcaller() and SpoofingTable[self] then
+		SpoofingTable[self][key] = newValue
+		local Blocking = getgenv().Blocking
+		if Blocking[self] and Blocking[self][key] then
+			return true
+		end
+	end
+	return newindex(self, key, newValue, ...)
+end)
+
+local index
+index = hookmetamethod(game.Workspace, "__index", function(self, key)
+	local SpoofingList = getgenv().Spoofing
+	if not checkcaller() and SpoofingList[self] and SpoofingList[self][key] then
+		return SpoofingList[self][key]
+	end
+	return index(self, key)
+end)
+
+local namecall
+namecall = hookmetamethod(game:GetService("Players"), "__namecall", function(self, ...)
+	local method = getnamecallmethod()
+	if method == "Kick" and not checkcaller() then
+		return
+	end
+	return namecall(self, ...)
+end)
+local CustomFunctions = {}
+function CustomFunctions:BlockChanges(Object, Property)
+	local BlockingList = getgenv().Blocking
+	if not BlockingList[Object] then
+		BlockingList[Object] = {}
+	end
+	BlockingList[Object][Property] = true
+end
+return CustomFunctions
