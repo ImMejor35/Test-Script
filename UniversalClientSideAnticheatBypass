@@ -35,7 +35,7 @@ namecall = hookmetamethod(game:GetService("Players"), "__namecall", function(sel
 	return namecall(self, ...)
 end)
 local CustomFunctions = {}
-function CustomFunctions:BlockChanges(Object, Property)
+function CustomFunctions.BlockChanges(Object, Property)
 	local BlockingList = getgenv().Blocking
 	if not BlockingList[Object] then
 		BlockingList[Object] = {}
